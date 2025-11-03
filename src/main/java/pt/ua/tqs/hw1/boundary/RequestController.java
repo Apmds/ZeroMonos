@@ -1,35 +1,28 @@
 package pt.ua.tqs.hw1.boundary;
 
 import org.springframework.web.bind.annotation.RestController;
-
 import pt.ua.tqs.hw1.data.ServiceRequest;
-import pt.ua.tqs.hw1.service.InvalidRequestDateException;
-import pt.ua.tqs.hw1.service.InvalidStateTransitionException;
-import pt.ua.tqs.hw1.service.RequestNotFoundException;
-import pt.ua.tqs.hw1.service.RequestOverflowException;
-import pt.ua.tqs.hw1.service.RequestService;
-
+import pt.ua.tqs.hw1.service.*;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 public class RequestController {
-    
-    private static final Logger log = LoggerFactory.getLogger(RequestController.class);
 
+    private static final Logger log = LoggerFactory.getLogger(RequestController.class);
     private static final String ERROR_KEY = "error"; 
     private final RequestService requestService;
+
+    public RequestController(RequestService requestService) {
+        this.requestService = requestService;
+    }
 
     private ResponseEntity<Object> requestNotFoundResponse() {
         log.warn("Request not found.");
@@ -41,14 +34,24 @@ public class RequestController {
         return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "invalid token"));
     }
 
-    public RequestController(RequestService requestService) {
-        this.requestService = requestService;
+    private ResponseEntity<Object> handleRequestOperation(String token, Function<Long, Object> operation, String invalidStateMsg) {
+        try {
+            var result = operation.apply(Long.valueOf(token));
+            return ResponseEntity.ok(result);
+        } catch (RequestNotFoundException e) {
+            log.warn("Request with token={} not found", token);
+            return requestNotFoundResponse();
+        } catch (NumberFormatException e) {
+            return invalidTokenResponse();
+        } catch (InvalidStateTransitionException e) {
+            log.warn("Invalid state transition for request {}", token);
+            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, invalidStateMsg));
+        }
     }
 
     @PostMapping("/submit")
     public ResponseEntity<Object> submitRequest(@RequestBody ServiceRequest request) {
         log.info("/submit POST request received");
-        
         try {
             ServiceRequest saved = requestService.submitRequest(request);
             log.info("Request successfully created with token={} and state={}", saved.getToken(), saved.getState());
@@ -71,16 +74,15 @@ public class RequestController {
     }
 
     @GetMapping("/requests/municipalities/{municipality}")
-    public ResponseEntity<List<ServiceRequest>> getRequestsInMunicipality(@PathVariable(value = "municipality") String municipality) {
+    public ResponseEntity<List<ServiceRequest>> getRequestsInMunicipality(@PathVariable String municipality) {
         log.info("/requests/municipalities/municipality GET request");
         List<ServiceRequest> requests = requestService.getRequests(municipality);
         return new ResponseEntity<>(requests, HttpStatus.OK);
     }
 
     @GetMapping("/requests/{id}")
-    public ResponseEntity<Object> getRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> getRequest(@PathVariable("id") String token) {
         log.info("/requests/id GET request");
-
         try {
             ServiceRequest req = requestService.getRequest(Long.valueOf(token));
             log.info("Request found with token={}, state={}", req.getToken(), req.getState());
@@ -94,9 +96,8 @@ public class RequestController {
     }
 
     @GetMapping("/requests/{id}/states")
-    public ResponseEntity<Object> getRequestStates(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> getRequestStates(@PathVariable("id") String token) {
         log.info("/requests/id/states GET request");
-        
         try {
             var states = requestService.getStateChanges(Long.valueOf(token));
             return ResponseEntity.ok(states);
@@ -109,78 +110,26 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{id}/cancel")
-    public ResponseEntity<Object> cancelRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> cancelRequest(@PathVariable("id") String token) {
         log.info("/requests/id/cancel PUT request");
-        
-        try {
-            var result = requestService.cancelRequest(Long.valueOf(token));
-            log.info("Request successfully cancelled");
-            return ResponseEntity.ok(result);
-        } catch (RequestNotFoundException e) {
-            log.warn("Attempted to cancel non-existent request with token={}", token);
-            return requestNotFoundResponse();
-        } catch (NumberFormatException e) {
-            return invalidTokenResponse();
-        } catch (InvalidStateTransitionException e) {
-            log.warn("Invalid state transition while cancelling request {}", token);
-            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "request isn't in a valid state to be cancelled"));
-        }
+        return handleRequestOperation(token, requestService::cancelRequest, "request isn't in a valid state to be cancelled");
     }
 
     @PutMapping("/requests/{id}/assign")
-    public ResponseEntity<Object> assignRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> assignRequest(@PathVariable("id") String token) {
         log.info("/requests/id/assign PUT request");
-        
-        try {
-            var result = requestService.assignRequest(Long.valueOf(token));
-            log.info("Request successfully assigned");
-            return ResponseEntity.ok(result);
-        } catch (RequestNotFoundException e) {
-            log.warn("Attempted to assign non-existent request with token={}", token);
-            return requestNotFoundResponse();
-        } catch (NumberFormatException e) {
-            return invalidTokenResponse();
-        } catch (InvalidStateTransitionException e) {
-            log.warn("Invalid state transition while assigning request {}", token);
-            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "request isn't in a valid state to be assigned"));
-        }
+        return handleRequestOperation(token, requestService::assignRequest, "request isn't in a valid state to be assigned");
     }
 
     @PutMapping("/requests/{id}/start")
-    public ResponseEntity<Object> startRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> startRequest(@PathVariable("id") String token) {
         log.info("/requests/id/start PUT request");
-        
-        try {
-            var result = requestService.startRequest(Long.valueOf(token));
-            log.info("Request successfully started");
-            return ResponseEntity.ok(result);
-        } catch (RequestNotFoundException e) {
-            log.warn("Attempted to start non-existent request with token={}", token);
-            return requestNotFoundResponse();
-        } catch (NumberFormatException e) {
-            return invalidTokenResponse();
-        } catch (InvalidStateTransitionException e) {
-            log.warn("Invalid state transition while starting request {}", token);
-            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "request isn't in a valid state to start"));
-        }
+        return handleRequestOperation(token, requestService::startRequest, "request isn't in a valid state to start");
     }
 
     @PutMapping("/requests/{id}/end")
-    public ResponseEntity<Object> completeRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> completeRequest(@PathVariable("id") String token) {
         log.info("/requests/id/end PUT request");
-        
-        try {
-            var result = requestService.completeRequest(Long.valueOf(token));
-            log.info("Request successfully completed");
-            return ResponseEntity.ok(result);
-        } catch (RequestNotFoundException e) {
-            log.warn("Attempted to complete non-existent request with token={}", token);
-            return requestNotFoundResponse();
-        } catch (NumberFormatException e) {
-            return invalidTokenResponse();
-        } catch (InvalidStateTransitionException e) {
-            log.warn("Invalid state transition while completing request {}", token);
-            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "request isn't in a valid state to end"));
-        }
+        return handleRequestOperation(token, requestService::completeRequest, "request isn't in a valid state to end");
     }
 }
