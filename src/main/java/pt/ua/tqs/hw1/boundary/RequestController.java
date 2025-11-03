@@ -31,22 +31,20 @@ public class RequestController {
 
     private RequestService requestService;
 
-    private ResponseEntity<Map<String, String>> requestNotFoundResponse() {
+    private ResponseEntity<Object> requestNotFoundResponse() {
         return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
     }
 
-    private ResponseEntity<Map<String, String>> invalidTokenResponse() {
+    private ResponseEntity<Object> invalidTokenResponse() {
         return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
     }
-
-    private 
 
     public RequestController(RequestService requestService) {
         this.requestService = requestService;
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<?> submitRequest(@RequestBody ServiceRequest request) {
+    public ResponseEntity<Object> submitRequest(@RequestBody ServiceRequest request) {
         HttpStatus status = HttpStatus.CREATED;
         try {
             ServiceRequest saved = requestService.submitRequest(request);
@@ -69,7 +67,7 @@ public class RequestController {
     }
 
     @GetMapping("/requests/{id}")
-    public ResponseEntity<?> getRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> getRequest(@PathVariable(value = "id") String token) {
 
         try {
             return ResponseEntity.ok(requestService.getRequest(Long.valueOf(token)));
@@ -81,7 +79,7 @@ public class RequestController {
     }
 
     @GetMapping("/requests/{id}/states")
-    public ResponseEntity<?> getRequestStates(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> getRequestStates(@PathVariable(value = "id") String token) {
         try {
             return ResponseEntity.ok(requestService.getStateChanges(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
@@ -92,7 +90,7 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{id}/cancel")
-    public ResponseEntity<?> cancelRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> cancelRequest(@PathVariable(value = "id") String token) {
         try {
             return ResponseEntity.ok(requestService.cancelRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
@@ -105,7 +103,7 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{id}/assign")
-    public ResponseEntity<?> assignRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> assignRequest(@PathVariable(value = "id") String token) {
         try {
             return ResponseEntity.ok(requestService.assignRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
@@ -118,7 +116,7 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{id}/start")
-    public ResponseEntity<?> startRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> startRequest(@PathVariable(value = "id") String token) {
         try {
             return ResponseEntity.ok(requestService.startRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
@@ -131,7 +129,7 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{id}/end")
-    public ResponseEntity<?> completeRequest(@PathVariable(value = "id") String token) {
+    public ResponseEntity<Object> completeRequest(@PathVariable(value = "id") String token) {
         try {
             return ResponseEntity.ok(requestService.completeRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
