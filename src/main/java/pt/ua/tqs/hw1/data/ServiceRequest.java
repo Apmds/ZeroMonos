@@ -81,9 +81,9 @@ public class ServiceRequest {
         this.state = state;
 
         // Logic for adding new state
-        RequestStateChange new_change = new RequestStateChange(LocalDateTime.now(), state);
-        new_change.setServiceRequest(this);
-        this.stateChanges.add(new_change);
+        RequestStateChange newChange = new RequestStateChange(LocalDateTime.now(), state);
+        newChange.setServiceRequest(this);
+        this.stateChanges.add(newChange);
     }
 
     public Set<RequestStateChange> getStateChanges() {

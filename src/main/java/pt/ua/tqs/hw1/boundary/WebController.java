@@ -17,13 +17,13 @@ public class WebController {
     }
 
     @GetMapping("/user")
-    public String user_interface(Model model) {
+    public String userInterface(Model model) {
         model.addAttribute("options", municipalityClient.getMunicipalities());
         return "user_interface";
     }
     
     @GetMapping("/staff")
-    public String staff_interface(Model model) {
+    public String staffInterface(Model model) {
         model.addAttribute("options", municipalityClient.getMunicipalities());
         return "staff_interface.html";
     }
