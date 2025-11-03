@@ -71,8 +71,7 @@ class RequestServiceGettersTest {
 
         List<ServiceRequest> result = service.getRequests();
 
-        assertThat(result).hasSize(3);
-        assertThat(result).containsExactlyInAnyOrder(req1, req2, req3);
+        assertThat(result).hasSize(3).containsExactlyInAnyOrder(req1, req2, req3);
         verify(repository, times(1)).findAll();
     }
 
@@ -91,7 +90,6 @@ class RequestServiceGettersTest {
         List<RequestStateChange> result = service.getStateChanges(1);
 
         // Assert
-        assertThat(result).hasSize(3);
-        assertThat(result).containsExactly(c2, c1, c3);
+        assertThat(result).hasSize(3).containsExactly(c2, c1, c3);
     }
 }
