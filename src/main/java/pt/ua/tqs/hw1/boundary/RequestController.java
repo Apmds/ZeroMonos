@@ -5,7 +5,8 @@ import pt.ua.tqs.hw1.data.ServiceRequest;
 import pt.ua.tqs.hw1.service.*;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.LongFunction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class RequestController {
         return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "invalid token"));
     }
 
-    private ResponseEntity<Object> handleRequestOperation(String token, Function<Long, Object> operation, String invalidStateMsg) {
+    private ResponseEntity<Object> handleRequestOperation(String token, LongFunction<Object> operation, String invalidStateMsg) {
         try {
             var result = operation.apply(Long.valueOf(token));
             return ResponseEntity.ok(result);
