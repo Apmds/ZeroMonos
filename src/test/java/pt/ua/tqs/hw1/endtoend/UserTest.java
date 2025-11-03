@@ -23,14 +23,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ExtendWith(SeleniumJupiter.class)
-public class UserTest {
+class UserTest {
   
   @LocalServerPort
   private int port;
 
 
   @Test
-  public void user(FirefoxDriver driver) {
+  void user(FirefoxDriver driver) {
       driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
 
     driver.get("http://localhost:" + port + "/");

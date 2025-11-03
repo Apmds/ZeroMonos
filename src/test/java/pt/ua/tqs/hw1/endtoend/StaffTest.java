@@ -24,13 +24,13 @@ import java.time.Duration;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ExtendWith(SeleniumJupiter.class)
-public class StaffTest {
+class StaffTest {
 
   @LocalServerPort
   private int port;
 
   @Test
-  public void staff(FirefoxDriver driver) {
+  void staff(FirefoxDriver driver) {
     driver.get("http://localhost:" + port + "/");
     driver.findElement(By.linkText("User inteface")).click();
     driver.findElement(By.id("descriptionInput")).click();
