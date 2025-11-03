@@ -101,6 +101,12 @@
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
             <version>0.8.13</version>
+			<configuration>
+				<excludes>
+					<exclude>**/data/RequestStateChangeId.class</exclude>
+					<exclude>**/Hw1Application.class</exclude>
+				</excludes>
+			</configuration>
             <executions>
                 <!-- Attach JaCoCo agent to tests -->
                 <execution>
