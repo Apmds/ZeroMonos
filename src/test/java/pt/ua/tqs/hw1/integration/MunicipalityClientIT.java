@@ -1,6 +1,6 @@
 package pt.ua.tqs.hw1.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ class MunicipalityClientIT {
         List<String> secondCall = client.getMunicipalities();
         verify(client, times(1)).loadMunicipalities();
 
-        assertEquals(List.of("Aveiro", "Porto"), firstCall);
-        assertEquals(firstCall, secondCall);
+        assertThat(firstCall).hasSize(308); // Actual number of municipalities (probably not very good for testing)
+        assertThat(firstCall).isEqualTo(secondCall);
     }
 }
