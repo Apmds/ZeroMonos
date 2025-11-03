@@ -38,4 +38,4 @@ jobs:
       - name: Build and analyze (skip Selenium)
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pno-selenium -Dsonar.projectKey=Apmds_ZeroMonos
+        run: mvn -Dtest=\!**/endtoend/**,\!*UserTest,\!*SeleniumTest -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Apmds_ZeroMonos
