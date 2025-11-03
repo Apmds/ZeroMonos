@@ -30,7 +30,6 @@ class MunicipalityClientIT {
         List<String> secondCall = client.getMunicipalities();
         verify(client, times(1)).loadMunicipalities();
 
-        assertThat(firstCall).hasSize(308); // Actual number of municipalities (probably not very good for testing)
-        assertThat(firstCall).isEqualTo(secondCall);
+        assertThat(firstCall).hasSize(308).isEqualTo(secondCall); // Actual number of municipalities (probably not very good for testing)
     }
 }
