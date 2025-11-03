@@ -36,9 +36,7 @@ public class MunicipalityClient {
                 }
 
             } finally {
-                if (response != null) {
-                    response.close();
-                }
+                response.close();
             }
         }
     }

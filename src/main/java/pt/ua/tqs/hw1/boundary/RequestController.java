@@ -29,14 +29,15 @@ public class RequestController {
     // TODO: logging
     // TODO: change bad requests to not found when applicable
 
+    private static final String ERROR_KEY = "error"; 
     private RequestService requestService;
 
     private ResponseEntity<Object> requestNotFoundResponse() {
-        return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
+        return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "couldn't find the request"));
     }
 
     private ResponseEntity<Object> invalidTokenResponse() {
-        return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
+        return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "invalid token"));
     }
 
     public RequestController(RequestService requestService) {
@@ -50,9 +51,9 @@ public class RequestController {
             ServiceRequest saved = requestService.submitRequest(request);
             return new ResponseEntity<>(saved, status);
         } catch (InvalidRequestDateException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "the request date is invalid"));
+            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "the request date is invalid"));
         } catch (RequestOverflowException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "too many requests for this day and place have already been booked"));
+            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "too many requests for this day and place have already been booked"));
         }
     }
 
@@ -98,7 +99,7 @@ public class RequestController {
         } catch (NumberFormatException e) {
             return invalidTokenResponse();
         } catch (InvalidStateTransitionException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "request isn't in a valid state to be cancelled"));
+            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "request isn't in a valid state to be cancelled"));
         }
     }
 
@@ -111,7 +112,7 @@ public class RequestController {
         } catch (NumberFormatException e) {
             return invalidTokenResponse();
         } catch (InvalidStateTransitionException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "request isn't in a valid state to be assigned"));
+            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "request isn't in a valid state to be assigned"));
         }
     }
 
@@ -124,7 +125,7 @@ public class RequestController {
         } catch (NumberFormatException e) {
             return invalidTokenResponse();
         } catch (InvalidStateTransitionException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "request isn't in a valid state to start"));
+            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "request isn't in a valid state to start"));
         }
     }
 
@@ -137,7 +138,7 @@ public class RequestController {
         } catch (NumberFormatException e) {
             return invalidTokenResponse();
         } catch (InvalidStateTransitionException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "request isn't in a valid state to end"));
+            return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "request isn't in a valid state to end"));
         }
     }
 }
