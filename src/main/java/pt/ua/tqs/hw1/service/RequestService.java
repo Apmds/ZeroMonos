@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pt.ua.tqs.hw1.data.RequestRepository;
@@ -18,8 +17,11 @@ import pt.ua.tqs.hw1.data.ServiceRequest;
 @Service
 public class RequestService {
 
-    @Autowired
     private RequestRepository repository;
+
+    public RequestService(RequestRepository repository) {
+        this.repository = repository;
+    }
 
     private static final int MAX_REQUESTS_PER_DAY_AND_PLACE = 2;
 

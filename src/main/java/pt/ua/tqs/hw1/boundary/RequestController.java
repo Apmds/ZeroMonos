@@ -12,7 +12,6 @@ import pt.ua.tqs.hw1.service.RequestService;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +27,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/api")
 public class RequestController {
     // TODO: logging
-    @Autowired
+
     private RequestService requestService;
+
+    public RequestController(RequestService requestService) {
+        this.requestService = requestService;
+    }
 
     @PostMapping("/submit")
     public ResponseEntity<?> submitRequest(@RequestBody ServiceRequest request) {
