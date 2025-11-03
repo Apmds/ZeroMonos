@@ -127,8 +127,7 @@ class RequestControllerTest {
         when(requestService.getRequest(999)).thenThrow(new RequestNotFoundException());
 
         mockMvc.perform(get("/api/requests/999"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("couldn't find the request"));
+                .andExpect(status().isNotFound());
     }
 
 
@@ -168,8 +167,7 @@ class RequestControllerTest {
         when(requestService.getStateChanges(999)).thenThrow(new RequestNotFoundException());
 
         mockMvc.perform(get("/api/requests/999/states"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("couldn't find the request"));
+                .andExpect(status().isNotFound());
     }
 
     
@@ -206,8 +204,7 @@ class RequestControllerTest {
         when(requestService.cancelRequest(999)).thenThrow(new RequestNotFoundException());
 
         mockMvc.perform(put("/api/requests/999/cancel"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("couldn't find the request"));
+                .andExpect(status().isNotFound());
     }
 
 
@@ -244,8 +241,7 @@ class RequestControllerTest {
         when(requestService.assignRequest(999)).thenThrow(new RequestNotFoundException());
 
         mockMvc.perform(put("/api/requests/999/assign"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("couldn't find the request"));
+                .andExpect(status().isNotFound());
     }
 
 
@@ -282,8 +278,7 @@ class RequestControllerTest {
         when(requestService.startRequest(999)).thenThrow(new RequestNotFoundException());
 
         mockMvc.perform(put("/api/requests/999/start"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("couldn't find the request"));
+                .andExpect(status().isNotFound());
     }
 
 
@@ -320,7 +315,6 @@ class RequestControllerTest {
         when(requestService.completeRequest(999)).thenThrow(new RequestNotFoundException());
 
         mockMvc.perform(put("/api/requests/999/end"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("couldn't find the request"));
+                .andExpect(status().isNotFound());
     }
 }

@@ -27,13 +27,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/api")
 public class RequestController {
     // TODO: logging
-    // TODO: change bad requests to not found when applicable
 
     private static final String ERROR_KEY = "error"; 
     private RequestService requestService;
 
     private ResponseEntity<Object> requestNotFoundResponse() {
-        return ResponseEntity.badRequest().body(Map.of(ERROR_KEY, "couldn't find the request"));
+        return ResponseEntity.notFound().build();
     }
 
     private ResponseEntity<Object> invalidTokenResponse() {
