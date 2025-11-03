@@ -47,8 +47,7 @@ public class RequestController {
 
     @PostMapping("/submit")
     public ResponseEntity<Object> submitRequest(@RequestBody ServiceRequest request) {
-        log.info("/submit POST request received with description='{}', municipality='{}', date={}", 
-                 request.getDescription(), request.getMunicipality(), request.getDate());
+        log.info("/submit POST request received");
         
         try {
             ServiceRequest saved = requestService.submitRequest(request);
@@ -73,15 +72,14 @@ public class RequestController {
 
     @GetMapping("/requests/municipalities/{municipality}")
     public ResponseEntity<List<ServiceRequest>> getRequestsInMunicipality(@PathVariable(value = "municipality") String municipality) {
-        log.info("/requests/municipalities/{} GET request", municipality);
+        log.info("/requests/municipalities/municipality GET request");
         List<ServiceRequest> requests = requestService.getRequests(municipality);
-        log.info("Found {} requests in municipality '{}'", requests.size(), municipality);
         return new ResponseEntity<>(requests, HttpStatus.OK);
     }
 
     @GetMapping("/requests/{id}")
     public ResponseEntity<Object> getRequest(@PathVariable(value = "id") String token) {
-        log.info("/requests/{} GET request", token);
+        log.info("/requests/id GET request");
 
         try {
             ServiceRequest req = requestService.getRequest(Long.valueOf(token));
@@ -97,11 +95,10 @@ public class RequestController {
 
     @GetMapping("/requests/{id}/states")
     public ResponseEntity<Object> getRequestStates(@PathVariable(value = "id") String token) {
-        log.info("/requests/{}/states GET request", token);
+        log.info("/requests/id/states GET request");
         
         try {
             var states = requestService.getStateChanges(Long.valueOf(token));
-            log.info("Returning {} state changes for request {}", states.size(), token);
             return ResponseEntity.ok(states);
         } catch (RequestNotFoundException e) {
             log.warn("Request with token={} not found for state history", token);
@@ -113,11 +110,11 @@ public class RequestController {
 
     @PutMapping("/requests/{id}/cancel")
     public ResponseEntity<Object> cancelRequest(@PathVariable(value = "id") String token) {
-        log.info("/requests/{}/cancel PUT request", token);
+        log.info("/requests/id/cancel PUT request");
         
         try {
             var result = requestService.cancelRequest(Long.valueOf(token));
-            log.info("Request {} successfully cancelled", token);
+            log.info("Request successfully cancelled");
             return ResponseEntity.ok(result);
         } catch (RequestNotFoundException e) {
             log.warn("Attempted to cancel non-existent request with token={}", token);
@@ -132,11 +129,11 @@ public class RequestController {
 
     @PutMapping("/requests/{id}/assign")
     public ResponseEntity<Object> assignRequest(@PathVariable(value = "id") String token) {
-        log.info("/requests/{}/assign PUT request", token);
+        log.info("/requests/id/assign PUT request");
         
         try {
             var result = requestService.assignRequest(Long.valueOf(token));
-            log.info("Request {} successfully assigned", token);
+            log.info("Request successfully assigned");
             return ResponseEntity.ok(result);
         } catch (RequestNotFoundException e) {
             log.warn("Attempted to assign non-existent request with token={}", token);
@@ -151,11 +148,11 @@ public class RequestController {
 
     @PutMapping("/requests/{id}/start")
     public ResponseEntity<Object> startRequest(@PathVariable(value = "id") String token) {
-        log.info("/requests/{}/start PUT request", token);
+        log.info("/requests/id/start PUT request");
         
         try {
             var result = requestService.startRequest(Long.valueOf(token));
-            log.info("Request {} successfully started", token);
+            log.info("Request successfully started");
             return ResponseEntity.ok(result);
         } catch (RequestNotFoundException e) {
             log.warn("Attempted to start non-existent request with token={}", token);
@@ -170,11 +167,11 @@ public class RequestController {
 
     @PutMapping("/requests/{id}/end")
     public ResponseEntity<Object> completeRequest(@PathVariable(value = "id") String token) {
-        log.info("/requests/{}/end PUT request", token);
+        log.info("/requests/id/end PUT request");
         
         try {
             var result = requestService.completeRequest(Long.valueOf(token));
-            log.info("Request {} successfully completed", token);
+            log.info("Request successfully completed");
             return ResponseEntity.ok(result);
         } catch (RequestNotFoundException e) {
             log.warn("Attempted to complete non-existent request with token={}", token);

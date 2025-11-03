@@ -59,9 +59,6 @@ public class MunicipalityClient {
                     log.warn("No entity found in API response");
                 }
             }
-        } catch (IOException e) {
-            log.error("Failed to load municipalities from API: {}", e.getMessage(), e);
-            throw e;
         }
     }
 

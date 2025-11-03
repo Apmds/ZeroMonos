@@ -43,24 +43,24 @@ public class RequestService {
     }
 
     public ServiceRequest submitRequest(ServiceRequest request) {
-        log.info("Submitting new request for municipality {} at {}", request.getMunicipality(), request.getDate());
+        log.info("Submitting new request");
 
         // The system can't accept dates before today
         if (request.getDate().isBefore(LocalDateTime.now())) {
-            log.warn("Rejected request: date {} is before now", request.getDate());
+            log.warn("Rejected request: date is before now");
             throw new InvalidRequestDateException();
         }
 
         // The system can't accept dates in the weekend
         DayOfWeek weekday = request.getDate().getDayOfWeek();
         if (weekday == DayOfWeek.SATURDAY || weekday == DayOfWeek.SUNDAY) {
-            log.warn("Rejected request: date {} falls on weekend ({})", request.getDate(), weekday);
+            log.warn("Rejected request: date falls on weekend ({})", weekday);
             throw new InvalidRequestDateException();
         }
 
         // The system can't accept times after 17:00h
         if (request.getDate().getHour() > 17) {
-            log.warn("Rejected request: time {} is after 17:00h", request.getDate().toLocalTime());
+            log.warn("Rejected request: time is after 17:00h");
             throw new InvalidRequestDateException();
         }
 
@@ -69,7 +69,7 @@ public class RequestService {
         List<ServiceRequest> samePlaceAndTime = repository.findByDateBetweenAndMunicipality(date.atStartOfDay(), date.atTime(LocalTime.MAX), request.getMunicipality());
 
         if (samePlaceAndTime.size() >= MAX_REQUESTS_PER_DAY_AND_PLACE) {
-            log.warn("Rejected request: municipality {} already has {} requests on {}", request.getMunicipality(), samePlaceAndTime.size(), date);
+            log.warn("Rejected request: municipality already has {} requests on {}", request.getMunicipality(), samePlaceAndTime.size(), date);
             throw new RequestOverflowException();
         }
 
@@ -84,7 +84,7 @@ public class RequestService {
     }
 
     public List<ServiceRequest> getRequests(String municipality) {
-        log.info("Fetching requests for municipality {}", municipality);
+        log.info("Fetching requests for municipality");
         return repository.findByDateAfterAndMunicipality(LocalDateTime.now(), municipality);
     }
 
