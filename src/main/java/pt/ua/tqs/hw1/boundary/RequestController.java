@@ -22,13 +22,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import static java.lang.invoke.MethodHandles.lookup;
-
 @RestController
 @RequestMapping("/api")
 public class RequestController {
     
-    static final Logger log = LoggerFactory.getLogger(lookup().lookupClass());
+    private static final Logger log = LoggerFactory.getLogger(RequestController.class);
 
     private static final String ERROR_KEY = "error"; 
     private final RequestService requestService;

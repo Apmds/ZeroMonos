@@ -8,12 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import pt.ua.tqs.hw1.service.MunicipalityClient;
 
-import static java.lang.invoke.MethodHandles.lookup;
 
 @Controller
 public class WebController {
 
-    static final Logger log = LoggerFactory.getLogger(lookup().lookupClass());
+    private static final Logger log = LoggerFactory.getLogger(WebController.class);
 
     private MunicipalityClient municipalityClient;
 

@@ -16,12 +16,11 @@ import pt.ua.tqs.hw1.data.RequestState;
 import pt.ua.tqs.hw1.data.RequestStateChange;
 import pt.ua.tqs.hw1.data.ServiceRequest;
 
-import static java.lang.invoke.MethodHandles.lookup;
 
 @Service
 public class RequestService {
 
-    static final Logger log = LoggerFactory.getLogger(lookup().lookupClass());
+    private static final Logger log = LoggerFactory.getLogger(RequestService.class);
 
     private RequestRepository repository;
 

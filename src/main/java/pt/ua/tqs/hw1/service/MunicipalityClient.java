@@ -16,12 +16,12 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static java.lang.invoke.MethodHandles.lookup;
+
 
 @Service
 public class MunicipalityClient {
 
-    static final Logger log = LoggerFactory.getLogger(lookup().lookupClass());
+    private static final Logger log = LoggerFactory.getLogger(MunicipalityClient.class);
 
     // Lazy loaded to save API requests
     private static List<String> municipalities;
