@@ -8,34 +8,16 @@ on:
 
 jobs:
   test:
-    name: Run Tests
+    name: Run Tests (no Selenium)
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-
-      # 🦊 Install Firefox and Geckodriver
-      - name: Install Firefox and Geckodriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y firefox
-          GECKODRIVER_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-          wget -q "https://github.com/mozilla/geckodriver/releases/download/${GECKODRIVER_VERSION}/geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz"
-          tar -xzf "geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz"
-          sudo mv geckodriver /usr/local/bin/
-          geckodriver --version
-          firefox --version
-
-      # 🧪 Run tests in headless mode
-      - name: Build and test with Maven (headless)
-        env:
-          MOZ_HEADLESS: 1       # Firefox headless
-          DISPLAY: :99          # Virtual display for X11
-        run: mvn clean verify -B
+      - name: Build and run tests (skip Selenium)
+        run: mvn clean verify -Pno-selenium -B

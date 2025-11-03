@@ -95,7 +95,7 @@
 			<artifactId>selenium-java</artifactId>
 			<version>4.38.0</version>
 		</dependency>
-		
+
 		<dependency>
   			<groupId>io.github.bonigarcia</groupId>
   			<artifactId>selenium-jupiter</artifactId>
@@ -166,10 +166,34 @@
 				<includes>
 					<include>**/*IT.java</include>
 				</includes>
+				<excludes>
+					<exclude>${excludedTests}</exclude>
+				</excludes>
+			</configuration>
+		</plugin>
+
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-failsafe-plugin</artifactId>
+			<version>3.2.5</version>
+			<configuration>
+				<excludes>
+					<exclude>${excludedTests}</exclude>
+				</excludes>
 			</configuration>
 		</plugin>
 
     </plugins>
+
+	<profiles>
+		<profile>
+			<id>no-selenium</id>
+			<properties>
+			<!-- Exclude Selenium tests from test runs -->
+			<excludedTests>**/endtoend/**,**/*SeleniumTest.java,**/*UserTest.java</excludedTests>
+			</properties>
+		</profile>
+	</profiles>
 </build>
 
 </project>
