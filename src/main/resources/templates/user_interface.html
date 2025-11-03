@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeroMonos - User interface</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+    <div class="main">
+        <h1>User interface</h1>
+        <div style="display: flex; width: 100%;">
+            <!-- Request page -->
+            <div class="user-page">
+                <h2>Make garbage collection request:</h2>
+
+                <form id="request-form" method="POST">
+
+                    <h3>Description:</h3>
+                    <textarea id="descriptionInput" placeholder="Describe your item..."></textarea>
+
+                    <h3>Municipality:</h3>
+                    <select id="municipalityInput">
+                        <option th:each="opt : ${options}" th:value="${opt}" th:text="${opt}"></option>
+                    </select>
+
+                    <h3>Collect time:</h3>
+                    <input type="datetime-local" id="dateInput">
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+
+
+            <!-- Request actions -->
+            <div class="user-page">
+                <h2>Query request:</h2>
+
+                <form id="action-form" method="POST">
+                    <h3>Request token:</h3>
+                    <input placeholder="Request token..." id="tokenInput"></input>
+
+                    <h3>Action:</h3>
+                    <select id="actionSelect">
+                        <option value="details">Get details</option>
+                        <option value="status">See status history</option>
+                        <option value="cancel">Cancel</option>
+                    </select>
+
+                    <button type="submit">Submit</button>
+                </form>
+
+                <div class="hidden" id="action-response-form" style="padding-left: 1rem; padding-top: 1rem;">
+                    <h3>Action details:</h3>
+                    <ul style="padding-left: 2rem; ">
+                        <li id="action-response-token">
+                            Token: ###
+                        </li>
+                        <li id="action-response-description">
+                            Description: ###
+                        </li>
+                        <li id="action-response-municipality">
+                            Municipality: ###
+                        </li>
+                        <li id="action-response-date">
+                            Collect date: ###
+                        </li>
+                        <li id="action-response-state">
+                            State: ###
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="hidden" id="action-response-states" style="padding-left: 1rem; padding-top: 1rem;">
+                    <h3>Action details:</h3>
+                    <ul style="padding-left: 2rem; " id="action-response-states-list">
+                        <!-- Add elements -->
+                    </ul>
+                </div>
+
+                <p id="action-response"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const request_form = document.getElementById("request-form");
+        const action_form = document.getElementById("action-form");
+
+        request_form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const desc = document.getElementById("descriptionInput").value.trim();
+            const date = document.getElementById("dateInput").value;
+            const municipalityElement = document.getElementById("municipalityInput");
+            const municipality = municipalityElement.options[municipalityElement.selectedIndex].value;
+
+            if (!desc) return;
+            if (!date) return;
+            if (!municipality) return;
+
+            try {
+                const response = await fetch("/api/submit", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ "description": desc, "date": date, "municipality": municipality })
+                });
+
+                if (response.status == 400) {
+                    const errormsg = await response.json();
+                    alert("Failed to submit this request: " + errormsg["error"]);
+                    return;
+                } else if (!response.ok) {
+                    alert("Failed to submit this request: unknown error");
+                    return;
+                }
+
+                const newRequest = await response.json();
+                alert("The request was submitted successfully! Token: " + newRequest["token"]);
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+
+        action_form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            document.getElementById("action-response-form").classList.add("hidden");
+            document.getElementById("action-response-states").classList.add("hidden");
+            const actionResponse = document.getElementById("action-response")
+            actionResponse.innerText = ""
+            const token = document.getElementById("tokenInput").value.trim();
+
+            const actionSelect = document.getElementById("actionSelect");
+            const action = actionSelect.options[actionSelect.selectedIndex].value;
+
+            if (!token) return;
+            if (!action) return;
+
+            if (action == "details") {
+                try {
+                    const response = await fetch("/api/requests/" + token, {
+                        method: "GET",
+                    });
+
+                    if (response.status == 400) {
+                        const errormsg = await response.json();
+                        actionResponse.innerText = "Failed to find this request: " + errormsg["error"];
+                        return;
+                    } else if (!response.ok) {
+                        actionResponse.innerText = "Failed to find this request: unknown error";
+                        return;
+                    }
+
+                    const request = await response.json();
+
+                    document.getElementById("action-response-token").innerText = "Token: " + request["token"]
+                    document.getElementById("action-response-description").innerText = "Description: " + request["description"]
+                    document.getElementById("action-response-municipality").innerText = "Municipality: " + request["municipality"]
+                    document.getElementById("action-response-date").innerText = "Collect date: " + request["date"]
+                    document.getElementById("action-response-state").innerText = "State: " +  request["state"].charAt(0).toUpperCase() + request["state"].slice(1).toLowerCase();
+                    document.getElementById("action-response-form").classList.remove("hidden");
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            if (action == "status") {
+                try {
+                    const response = await fetch("/api/requests/" + token + "/states", {
+                        method: "GET",
+                    });
+
+                    if (response.status == 400) {
+                        const errormsg = await response.json();
+                        actionResponse.innerText = "Failed to find this request: " + errormsg["error"];
+                        return;
+                    } else if (!response.ok) {
+                        actionResponse.innerText = "Failed to find this request: unknown error";
+                        return;
+                    }
+
+                    const request = await response.json();
+                    const statesList = document.getElementById("action-response-states-list")
+                    statesList.innerHTML = ""
+                    request.forEach(element => {
+                        const date = element["date"];
+                        const state = element["state"].charAt(0).toUpperCase() + element["state"].slice(1).toLowerCase();
+
+                        statesList.innerHTML += "<li>Date: " + date + "; State: " + state + "</li>"
+                    });
+                    document.getElementById("action-response-states").classList.remove("hidden");
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            if (action == "cancel") {
+                try {
+                    const response = await fetch("/api/requests/" + token + "/cancel", {
+                        method: "PUT",
+                    });
+
+                    if (response.status == 400) {
+                        const errormsg = await response.json();
+                        actionResponse.innerText = "Failed to find this request: " + errormsg["error"];
+                        return;
+                    } else if (!response.ok) {
+                        actionResponse.innerText = "Failed to find this request: unknown error";
+                        return;
+                    }
+
+                    const request = await response.json();
+                    actionResponse.innerText = "Request with token " + request["token"] + " cancelled.";
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

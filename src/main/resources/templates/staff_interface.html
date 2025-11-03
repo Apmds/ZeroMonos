@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeroMonos - Staff interface</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+    <div class="main">
+        <h1>Staff interface</h1>
+        <div style="display: flex; width: 100%;">
+            <div class="user-page">
+                <h2>See garbage collection requests:</h2>
+
+                <h3>Municipality:</h3>
+                <select>
+                    <option th:each="opt : ${options}" th:value="${opt}" th:text="${opt}"></option>
+                </select>
+
+                <div class="hidden" id="request-list">
+                    <h2>Request list (select a request):</h2>
+
+                    <!--
+                    <button>
+                        <ul style="padding-left: 2rem;  list-style-type: none; ">
+                            <li id="action-response-token">
+                                Token: ###
+                            </li>
+                            <li id="action-response-description">
+                                Description: ###
+                            </li>
+                            <li id="action-response-municipality">
+                                Municipality: ###
+                            </li>
+                            <li id="action-response-date">
+                                Collect date: ###
+                            </li>
+                            <li id="action-response-state">
+                                State: ###
+                            </li>
+                        </ul>
+                    </button>
+                    -->
+                </div>
+            </div>
+
+            <div class="user-page">
+                <h2>Update request state:</h2>
+                <ul style="padding-left: 2rem; ">
+                    <li id="request-details-token">
+                        Token: ###
+                    </li>
+                    <li id="request-details-description">
+                        Description: ###
+                    </li>
+                    <li id="request-details-municipality">
+                        Municipality: ###
+                    </li>
+                    <li id="request-details-date">
+                        Collect date: ###
+                    </li>
+                    <li id="request-details-state">
+                        State: ###
+                    </li>
+                </ul>
+
+                <h3>New state:</h3>
+                <form id="update-state-form">
+                    <select id="new-state">
+                        <option value="assign">
+                            Assign
+                        </option>
+                        <option value="start">
+                            Start
+                        </option>
+                        <option value="end">
+                            Complete
+                        </option>
+                    </select>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Partially generated with chatGPT
+        const municipalitySelect = document.querySelector("select");
+        const requestListDiv = document.getElementById("request-list");
+        const updateForm = document.getElementById("update-state-form");
+        const newStateSelect = document.getElementById("new-state");
+
+        let selectedRequest = null; // currently selected request
+
+        municipalitySelect.addEventListener("change", async (event) => {
+            const municipality = event.target.value;
+            requestListDiv.innerHTML = ""; // clear old results
+
+            if (!municipality) {
+                requestListDiv.classList.add("hidden");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/requests/municipalities/${municipality}`);
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+
+                const requests = await response.json();
+
+                if (requests.length === 0) {
+                    requestListDiv.innerHTML = "<p>No requests for this municipality.</p>";
+                    requestListDiv.classList.remove("hidden");
+                    return;
+                }
+
+                // Build new content
+                const title = document.createElement("h2");
+                title.textContent = "Request list (select a request):";
+                requestListDiv.appendChild(title);
+
+                requests.forEach(req => {
+                    const button = document.createElement("button");
+                    button.style.width = "100%";
+                    button.style.marginBottom = "0.5rem";
+                    button.innerHTML = `
+                    <ul style="padding-left: 2rem; list-style-type: none;">
+                        <li><strong>Token:</strong> ${req.token}</li>
+                        <li><strong>Description:</strong> ${req.description}</li>
+                        <li><strong>Municipality:</strong> ${req.municipality}</li>
+                        <li><strong>Collect date:</strong> ${req.date}</li>
+                        <li><strong>State:</strong> ${req.state}</li>
+                    </ul>
+                    `;
+
+                    // Example: click handler to fill right-side panel
+                    button.addEventListener("click", () => {
+                        selectedRequest = req; // keep reference to the selected request
+                        document.getElementById("request-details-token").textContent = `Token: ${req.token}`;
+                        document.getElementById("request-details-description").textContent = `Description: ${req.description}`;
+                        document.getElementById("request-details-municipality").textContent = `Municipality: ${req.municipality}`;
+                        document.getElementById("request-details-date").textContent = `Collect date: ${req.date}`;
+                        document.getElementById("request-details-state").textContent = `State: ${req.state}`;
+                    });
+
+                    requestListDiv.appendChild(button);
+                });
+
+                requestListDiv.classList.remove("hidden");
+            } catch (error) {
+                console.error("Error fetching requests:", error);
+                requestListDiv.innerHTML = "<p>Error loading requests. Please try again.</p>";
+                requestListDiv.classList.remove("hidden");
+            }
+        });
+
+        updateForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (!selectedRequest) {
+                alert("Please select a request first.");
+                return;
+            }
+
+            const newState = newStateSelect.value;
+            const token = selectedRequest.token;
+
+            try {
+                const response = await fetch(`/api/requests/${token}/${newState}`, {
+                    method: "PUT",
+                });
+
+                if (!response.ok) {
+                    const text = await response.json();
+                    throw new Error(text["error"] || `Request failed with status ${response.status}`);
+                }
+
+                const updatedRequest = await response.json();
+                selectedRequest = updatedRequest; // update reference
+
+                // Update displayed info
+                document.getElementById("request-details-state").textContent = `State: ${updatedRequest.state}`;
+                alert(`Request ${token} successfully updated to state "${updatedRequest.state}".`);
+            } catch (err) {
+                console.error(err);
+                alert(`Failed to update request: ${err.message}`);
+            }
+        });
+    </script>
+</body>
+
+</html>
