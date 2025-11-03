@@ -29,7 +29,7 @@ import pt.ua.tqs.hw1.service.RequestService;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class StateTransitionTest {
+class StateTransitionTest {
 
     @Mock
     private RequestRepository repository;
@@ -44,7 +44,7 @@ public class StateTransitionTest {
     }
 
     @Test
-    public void stateChangeRecording() {
+    void stateChangeRecording() {
         ServiceRequest request = new ServiceRequest();
         request.setState(RequestState.RECIEVED);
         request.setToken(1);

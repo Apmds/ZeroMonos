@@ -31,7 +31,7 @@ import pt.ua.tqs.hw1.service.RequestService;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class RequestServiceGettersTest {
+class RequestServiceGettersTest {
 
     @Mock
     private RequestRepository repository;

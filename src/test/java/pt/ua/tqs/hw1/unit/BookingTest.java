@@ -31,7 +31,7 @@ import pt.ua.tqs.hw1.service.RequestService;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class BookingTest {
+class BookingTest {
 
     @Mock
     private RequestRepository repository;
@@ -40,7 +40,7 @@ public class BookingTest {
     private RequestService service;
 
     @Test
-    public void normalBooking() {
+    void normalBooking() {
         // Get next monday
         LocalDate now = LocalDate.now();
         LocalDate mondayDate = now.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
@@ -59,14 +59,14 @@ public class BookingTest {
     }
 
     @Test
-    public void noBookingToBeforeNow() {
+    void noBookingToBeforeNow() {
         ServiceRequest request = new ServiceRequest(LocalDateTime.now().minusDays(1), "Matress removal request", RequestState.RECIEVED, "Almada");
         
         assertThrows(InvalidRequestDateException.class, () -> service.submitRequest(request));
     }
 
     @Test
-    public void noBookingToWeekends() {
+    void noBookingToWeekends() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime weekendDate = now.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
         ServiceRequest request = new ServiceRequest(weekendDate, "Matress removal request", RequestState.RECIEVED, "Almada");
@@ -75,7 +75,7 @@ public class BookingTest {
     }
 
     @Test
-    public void noBookingAfter17() {
+    void noBookingAfter17() {
         // Next thursday after 17h00
         LocalDateTime afterHoursDate = LocalDateTime.of(LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.THURSDAY)), LocalTime.of(18, 0, 0));
 
@@ -85,7 +85,7 @@ public class BookingTest {
     }
 
     @Test
-    public void requestOverflow() {
+    void requestOverflow() {
         LocalDate now = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.TUESDAY));
 
         // Only 2 requests per place and day

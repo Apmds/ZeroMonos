@@ -34,7 +34,7 @@ class MunicipalityClientTest {
     }
 
     @Test
-    public void lazyLoading() throws IOException {
+    void lazyLoading() throws IOException {
         // Generated with GPT
         doAnswer(invocation -> {
             Field field = MunicipalityClient.class.getDeclaredField("municipalities");

@@ -23,7 +23,7 @@ class MunicipalityClientIT {
     private MunicipalityClient client;
 
     @Test
-    public void lazyLoading() throws IOException {
+    void lazyLoading() throws IOException {
         List<String> firstCall = client.getMunicipalities();
         verify(client, times(1)).loadMunicipalities();
 
