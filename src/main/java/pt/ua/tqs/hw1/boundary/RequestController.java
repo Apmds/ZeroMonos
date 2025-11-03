@@ -27,8 +27,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/api")
 public class RequestController {
     // TODO: logging
+    // TODO: change bad requests to not found when applicable
 
     private RequestService requestService;
+
+    private ResponseEntity<Map<String, String>> requestNotFoundResponse() {
+        return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
+    }
+
+    private ResponseEntity<Map<String, String>> invalidTokenResponse() {
+        return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
+    }
+
+    private 
 
     public RequestController(RequestService requestService) {
         this.requestService = requestService;
@@ -63,9 +74,9 @@ public class RequestController {
         try {
             return ResponseEntity.ok(requestService.getRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
+            return requestNotFoundResponse();
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
+            return invalidTokenResponse();
         }
     }
 
@@ -74,9 +85,9 @@ public class RequestController {
         try {
             return ResponseEntity.ok(requestService.getStateChanges(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
+            return requestNotFoundResponse();
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
+            return invalidTokenResponse();
         }
     }
 
@@ -85,9 +96,9 @@ public class RequestController {
         try {
             return ResponseEntity.ok(requestService.cancelRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
+            return requestNotFoundResponse();
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
+            return invalidTokenResponse();
         } catch (InvalidStateTransitionException e) {
             return ResponseEntity.badRequest().body(Map.of("error", "request isn't in a valid state to be cancelled"));
         }
@@ -98,9 +109,9 @@ public class RequestController {
         try {
             return ResponseEntity.ok(requestService.assignRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
+            return requestNotFoundResponse();
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
+            return invalidTokenResponse();
         } catch (InvalidStateTransitionException e) {
             return ResponseEntity.badRequest().body(Map.of("error", "request isn't in a valid state to be assigned"));
         }
@@ -111,9 +122,9 @@ public class RequestController {
         try {
             return ResponseEntity.ok(requestService.startRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
+            return requestNotFoundResponse();
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
+            return invalidTokenResponse();
         } catch (InvalidStateTransitionException e) {
             return ResponseEntity.badRequest().body(Map.of("error", "request isn't in a valid state to start"));
         }
@@ -124,9 +135,9 @@ public class RequestController {
         try {
             return ResponseEntity.ok(requestService.completeRequest(Long.valueOf(token)));
         } catch (RequestNotFoundException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "couldn't find the request"));
+            return requestNotFoundResponse();
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "invalid token"));
+            return invalidTokenResponse();
         } catch (InvalidStateTransitionException e) {
             return ResponseEntity.badRequest().body(Map.of("error", "request isn't in a valid state to end"));
         }
