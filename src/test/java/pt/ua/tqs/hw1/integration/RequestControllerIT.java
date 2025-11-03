@@ -111,4 +111,104 @@ class RequestControllerIT {
             .body("description", contains("Help with my items", "Help me please"))
             .body("municipality", everyItem(equalTo("Aveiro")));
     }
+
+    @Test
+    void getRequest() {
+        LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDateTime dateTime = LocalDateTime.of(nextMonday, LocalTime.of(15, 30));
+
+        ServiceRequest request = repository.saveAndFlush(new ServiceRequest(dateTime, "Help me please", RequestState.RECIEVED, "Aveiro"));
+
+        given()
+        .when()
+            .get("/api/requests/{id}", String.valueOf(request.getToken()))
+        .then()
+            .statusCode(200)
+            .body("token", equalTo(Long.valueOf(request.getToken()).intValue()))
+            .body("description", equalTo("Help me please"));
+    }
+
+    @Test
+    void getRequestStates() {
+        LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDateTime dateTime = LocalDateTime.of(nextMonday, LocalTime.of(15, 30));
+
+        ServiceRequest request = repository.saveAndFlush(new ServiceRequest(dateTime, "Help me please", RequestState.RECIEVED, "Aveiro"));
+
+        request.setState(RequestState.ASSIGNED);
+        request.setState(RequestState.CANCELLED);
+
+        request = repository.saveAndFlush(request);
+
+        given()
+        .when()
+            .get("/api/requests/{id}/states", String.valueOf(request.getToken()))
+        .then()
+            .statusCode(200)
+            .body("state", contains("ASSIGNED", "CANCELLED"));
+    }
+
+    @Test
+    void cancelRequest() {
+        LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDateTime dateTime = LocalDateTime.of(nextMonday, LocalTime.of(15, 30));
+
+        ServiceRequest request = repository.saveAndFlush(new ServiceRequest(dateTime, "Help me please", RequestState.RECIEVED, "Aveiro"));
+
+        given()
+        .when()
+            .put("/api/requests/{id}/cancel", String.valueOf(request.getToken()))
+        .then()
+            .statusCode(200)
+            .body("token", equalTo(Long.valueOf(request.getToken()).intValue()))
+            .body("state", equalTo("CANCELLED"));
+    }
+
+    @Test
+    void assignRequest() {
+        LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDateTime dateTime = LocalDateTime.of(nextMonday, LocalTime.of(15, 30));
+
+        ServiceRequest request = repository.saveAndFlush(new ServiceRequest(dateTime, "Help me please", RequestState.RECIEVED, "Aveiro"));
+
+        given()
+        .when()
+            .put("/api/requests/{id}/assign", String.valueOf(request.getToken()))
+        .then()
+            .statusCode(200)
+            .body("token", equalTo(Long.valueOf(request.getToken()).intValue()))
+            .body("state", equalTo("ASSIGNED"));
+    }
+
+    @Test
+    void startRequest() {
+        LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDateTime dateTime = LocalDateTime.of(nextMonday, LocalTime.of(15, 30));
+
+        ServiceRequest request = repository.saveAndFlush(new ServiceRequest(dateTime, "Help me please", RequestState.ASSIGNED, "Aveiro"));
+
+        given()
+        .when()
+            .put("/api/requests/{id}/start", String.valueOf(request.getToken()))
+        .then()
+            .statusCode(200)
+            .body("token", equalTo(Long.valueOf(request.getToken()).intValue()))
+            .body("state", equalTo("IN_PROGRESS"));
+    }
+
+    @Test
+    void completeRequest() {
+        LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDateTime dateTime = LocalDateTime.of(nextMonday, LocalTime.of(15, 30));
+
+        ServiceRequest request = repository.saveAndFlush(new ServiceRequest(dateTime, "Help me please", RequestState.IN_PROGRESS, "Aveiro"));
+
+        given()
+        .when()
+            .put("/api/requests/{id}/end", String.valueOf(request.getToken()))
+        .then()
+            .statusCode(200)
+            .body("token", equalTo(Long.valueOf(request.getToken()).intValue()))
+            .body("state", equalTo("DONE"));
+    }
 }
