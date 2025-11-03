@@ -69,7 +69,7 @@ public class RequestService {
         List<ServiceRequest> samePlaceAndTime = repository.findByDateBetweenAndMunicipality(date.atStartOfDay(), date.atTime(LocalTime.MAX), request.getMunicipality());
 
         if (samePlaceAndTime.size() >= MAX_REQUESTS_PER_DAY_AND_PLACE) {
-            log.warn("Rejected request: municipality already has {} requests on {}", request.getMunicipality(), samePlaceAndTime.size(), date);
+            log.warn("Rejected request: municipality already has {} requests on {}", samePlaceAndTime.size(), date);
             throw new RequestOverflowException();
         }
 
