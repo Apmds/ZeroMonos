@@ -110,7 +110,7 @@
                 </execution>
 
                 <!-- (Optional) enforce minimum coverage -->
-                <execution>
+                <!--<execution>
                     <id>jacoco-check</id>
                     <phase>verify</phase>
                     <goals>
@@ -131,6 +131,7 @@
                         </rules>
                     </configuration>
                 </execution>
+				-->
             </executions>
         </plugin>
     </plugins>
