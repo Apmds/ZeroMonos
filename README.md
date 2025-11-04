@@ -27,7 +27,7 @@ ZeroMonos
     │   │   ├── boundary -------------------------------------- # Controllers
     │   │   │   ├── RequestController.java
     │   │   │   └── WebController.java
-    │   │   ├── data ------------------------------------------ # Database entities repositories
+    │   │   ├── data ------------------------------------------ # Database entities
     │   │   │   ├── RequestRepository.java
     │   │   │   ├── RequestStateChangeId.java
     │   │   │   ├── RequestStateChange.java
@@ -66,10 +66,6 @@ ZeroMonos
                 └── WebControllerTest.java
 ```
 
-## Demo video
-
-![demo-video](docs/Video.mkv)
-
 ## Diagrams
 
 ### Architecture
@@ -104,5 +100,7 @@ The system follows a layered architecture with separation of concerns.
 mvn spring-boot:run
 ```
 The app will be available at http://localhost:8080
+
 Swagger OpenAPI UI: http://localhost:8080/swagger-ui.html
+
 OpenAPI JSON: http://localhost:8080/v3/api-docs
