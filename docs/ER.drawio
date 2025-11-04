@@ -1,0 +1,45 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.16 Chrome/132.0.6834.196 Electron/34.2.0 Safari/537.36" version="26.0.16">
+  <diagram name="Page-1" id="f8v6hNA0lO1DHHAFkbrV">
+    <mxGraphModel dx="975" dy="583" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="w49zXzazIRl_CPIAtjrY-1" value="&lt;b&gt;&lt;u&gt;token&lt;/u&gt;&lt;/b&gt;" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="150" y="240" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-2" value="date" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="260" y="240" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-3" value="description" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="370" y="240" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-4" value="municipality" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="480" y="240" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-5" value="ServiceRequest" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="150" y="200" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-7" value="RequestStateChange" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="150" y="360" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-8" value="&lt;b&gt;&lt;u&gt;state&lt;/u&gt;&lt;/b&gt;" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="150" y="410" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-9" value="&lt;b&gt;&lt;u&gt;date&lt;/u&gt;&lt;/b&gt;" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="260" y="410" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="w49zXzazIRl_CPIAtjrY-11" target="w49zXzazIRl_CPIAtjrY-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="425" y="330" />
+              <mxPoint x="205" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="w49zXzazIRl_CPIAtjrY-11" value="serviceRequest (FK)" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="370" y="410" width="110" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
